@@ -4,13 +4,196 @@
 <head>
   <meta charset="UTF-8">
   <title>Penjana Takwim Ketua Panitia</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
-<body>
-  <!-- Kandungan utama (borang + preview + eksport PDF dengan pilihan orientasi) akan dimasukkan di sini -->
+<body class="bg-gray-100 text-gray-800 font-sans">
+  <div class="max-w-7xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+    
+    <!-- Form Section -->
+    <div>
+      <h1 class="text-2xl font-bold text-blue-700 mb-4">Isi Maklumat Takwim</h1>
+
+      <label class="block text-sm mb-1">Muat Naik Logo Sekolah:</label>
+      <input type="file" id="logoInput" accept="image/*" class="mb-4 p-2 border rounded w-full" onchange="previewLogo(event)">
+
+      <input id="namaSekolah" placeholder="Nama Sekolah" class="block w-full mb-2 p-2 border rounded">
+      <input id="alamatSekolah" placeholder="Alamat Sekolah" class="block w-full mb-2 p-2 border rounded">
+      <input id="tajukTakwim" placeholder="Tajuk Takwim" class="block w-full mb-4 p-2 border rounded">
+
+      <div class="grid grid-cols-2 gap-2 mb-2">
+        <input type="date" id="tarikh" class="p-2 border rounded" placeholder="Tarikh">
+        <input type="text" id="aktiviti" placeholder="Aktiviti" class="p-2 border rounded">
+        <input type="text" id="tempat" placeholder="Tempat" class="p-2 border rounded">
+        <input type="text" id="catatan" placeholder="Catatan" class="p-2 border rounded">
+      </div>
+      <button onclick="tambahBaris()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mb-4">Tambah Aktiviti</button>
+
+      <h2 class="text-xl font-semibold mt-4">Maklumat Penyedia & Penyemak</h2>
+      <div class="grid grid-cols-2 gap-2 mt-2">
+        <div>
+          <input id="penyediaNama" placeholder="Nama Penyedia" class="block w-full mb-1 p-2 border rounded">
+          <input id="penyediaJawatan" placeholder="Jawatan" class="block w-full mb-1 p-2 border rounded">
+          <input type="date" id="penyediaTarikh" class="block w-full mb-1 p-2 border rounded">
+        </div>
+        <div>
+          <input id="penyemakNama" placeholder="Nama Penyemak" class="block w-full mb-1 p-2 border rounded">
+          <input id="penyemakJawatan" placeholder="Jawatan" class="block w-full mb-1 p-2 border rounded">
+          <input type="date" id="penyemakTarikh" class="block w-full mb-1 p-2 border rounded">
+        </div>
+      </div>
+
+      <div class="mt-6 text-center">
+        <label class="block mb-2 font-medium text-sm text-gray-700">Pilih Orientasi PDF:</label>
+        <select id="previewOrientation" class="p-2 border rounded mb-4" onchange="tukarOrientasiPreview()">
+          <option value="portrait">Potret</option>
+          <option value="landscape">Lanskap</option>
+        </select>
+        <div class="flex justify-center">
+          <button onclick="muatTurunPDF()" class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700">Muat Turun PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Section -->
+    <div id="previewContainer" class="bg-white p-6 rounded-xl shadow-lg w-full transition-all duration-300">
+      <img id="schoolLogo" src="" alt="Logo Sekolah" class="w-24 h-24 object-contain mx-auto mb-2 hidden">
+      <h2 class="text-xl font-bold text-center text-blue-800" id="previewSekolah">Nama Sekolah</h2>
+      <p class="text-center text-sm text-gray-600 mb-2" id="previewAlamat">Alamat Sekolah</p>
+      <h3 class="text-center text-lg font-semibold mb-4" id="previewTajuk">Tajuk Takwim</h3>
+
+      <table class="w-full text-sm border border-gray-300 mb-6" id="previewTable">
+        <thead class="bg-blue-100">
+          <tr><th class="border p-1">Tarikh</th><th class="border p-1">Aktiviti</th><th class="border p-1">Tempat</th><th class="border p-1">Catatan</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="grid grid-cols-2 gap-6 text-sm">
+        <div>
+          <p class="font-semibold mb-6">Disediakan oleh:</p>
+          <div class="h-0.5 bg-black mb-2 w-2/3"></div>
+          <p id="previewPenyediaNama"></p>
+          <p id="previewPenyediaJawatan"></p>
+          <p id="previewPenyediaTarikh"></p>
+        </div>
+        <div>
+          <p class="font-semibold mb-6">Disemak oleh:</p>
+          <div class="h-0.5 bg-black mb-2 w-2/3"></div>
+          <p id="previewPenyemakNama"></p>
+          <p id="previewPenyemakJawatan"></p>
+          <p id="previewPenyemakTarikh"></p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <footer class="mt-10 text-center text-sm text-gray-500">
     © 2025 Hak Cipta Cikgu Lai. Dibina untuk warga pendidikan.
   </footer>
+
+<script>
+  let logoDataUrl = "";
+
+  function previewLogo(event) {
+    const reader = new FileReader();
+    reader.onload = function () {
+      const logo = document.getElementById("schoolLogo");
+      logo.src = reader.result;
+      logo.classList.remove("hidden");
+      logoDataUrl = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+  }
+
+  function updatePreview() {
+    document.getElementById("previewSekolah").innerText = document.getElementById("namaSekolah").value || "Nama Sekolah";
+    document.getElementById("previewAlamat").innerText = document.getElementById("alamatSekolah").value || "Alamat Sekolah";
+    document.getElementById("previewTajuk").innerText = document.getElementById("tajukTakwim").value || "Tajuk Takwim";
+
+    document.getElementById("previewPenyediaNama").innerText = document.getElementById("penyediaNama").value;
+    document.getElementById("previewPenyediaJawatan").innerText = document.getElementById("penyediaJawatan").value;
+    document.getElementById("previewPenyediaTarikh").innerText = document.getElementById("penyediaTarikh").value;
+
+    document.getElementById("previewPenyemakNama").innerText = document.getElementById("penyemakNama").value;
+    document.getElementById("previewPenyemakJawatan").innerText = document.getElementById("penyemakJawatan").value;
+    document.getElementById("previewPenyemakTarikh").innerText = document.getElementById("penyemakTarikh").value;
+  }
+
+  document.querySelectorAll("input").forEach(input => {
+    input.addEventListener("input", updatePreview);
+  });
+
+  function tambahBaris() {
+    const tarikh = document.getElementById('tarikh').value;
+    const aktiviti = document.getElementById('aktiviti').value;
+    const tempat = document.getElementById('tempat').value;
+    const catatan = document.getElementById('catatan').value;
+
+    const tbody = document.getElementById('previewTable').querySelector("tbody");
+    const row = tbody.insertRow();
+    row.insertCell(0).innerText = tarikh;
+    row.insertCell(1).innerText = aktiviti;
+    row.insertCell(2).innerText = tempat;
+    row.insertCell(3).innerText = catatan;
+
+    updatePreview();
+
+    document.getElementById('tarikh').value = '';
+    document.getElementById('aktiviti').value = '';
+    document.getElementById('tempat').value = '';
+    document.getElementById('catatan').value = '';
+  }
+
+  function tukarOrientasiPreview() {
+    const orientation = document.getElementById("previewOrientation").value;
+    const container = document.getElementById("previewContainer");
+    container.style.width = orientation === "landscape" ? "1200px" : "100%";
+  }
+
+  async function muatTurunPDF() {
+    const { jsPDF } = window.jspdf;
+    const orientation = document.getElementById("previewOrientation").value;
+    const doc = new jsPDF({ orientation });
+
+    if (logoDataUrl) {
+      doc.addImage(logoDataUrl, "PNG", 10, 10, 30, 30);
+    }
+
+    doc.setFontSize(12);
+    doc.text(document.getElementById("namaSekolah").value || "Nama Sekolah", 45, 15);
+    doc.text(document.getElementById("alamatSekolah").value || "Alamat Sekolah", 45, 22);
+    doc.text(document.getElementById("tajukTakwim").value || "Tajuk Takwim", 14, 32);
+
+    const rows = [];
+    const tbody = document.getElementById('previewTable').querySelector("tbody");
+    for (let i = 0; i < tbody.rows.length; i++) {
+      const r = tbody.rows[i];
+      rows.push([
+        r.cells[0].innerText,
+        r.cells[1].innerText,
+        r.cells[2].innerText,
+        r.cells[3].innerText
+      ]);
+    }
+
+    doc.autoTable({
+      head: [['Tarikh', 'Aktiviti', 'Tempat', 'Catatan']],
+      body: rows,
+      startY: 40,
+    });
+
+    doc.text(`Disediakan oleh: ${document.getElementById('penyediaNama').value}`, 14, doc.lastAutoTable.finalY + 20);
+    doc.text(`Jawatan: ${document.getElementById('penyediaJawatan').value}`, 14, doc.lastAutoTable.finalY + 26);
+    doc.text(`Tarikh: ${document.getElementById('penyediaTarikh').value}`, 14, doc.lastAutoTable.finalY + 32);
+
+    doc.text(`Disemak oleh: ${document.getElementById('penyemakNama').value}`, 110, doc.lastAutoTable.finalY + 20);
+    doc.text(`Jawatan: ${document.getElementById('penyemakJawatan').value}`, 110, doc.lastAutoTable.finalY + 26);
+    doc.text(`Tarikh: ${document.getElementById('penyemakTarikh').value}`, 110, doc.lastAutoTable.finalY + 32);
+
+    doc.save("Takwim-Ketua-Panitia.pdf");
+  }
+</script>
 </body>
 </html>
-
