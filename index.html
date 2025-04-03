@@ -4,62 +4,19 @@
 <head>
   <meta charset="UTF-8">
   <title>Penjana Takwim Ketua Panitia</title>
-  <script src="https://cdn.tailwindcss.com">
-    let logoDataUrl = "";
-
-    function previewLogo(event) {
-      const reader = new FileReader();
-      reader.onload = function () {
-        const logo = document.getElementById("schoolLogo");
-        logo.src = reader.result;
-        logo.classList.remove("hidden");
-        logoDataUrl = reader.result;
-      };
-      reader.readAsDataURL(event.target.files[0]);
-    }
-    </script>
-    
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
-    let logoDataUrl = "";
-
-    function previewLogo(event) {
-      const reader = new FileReader();
-      reader.onload = function () {
-        const logo = document.getElementById("schoolLogo");
-        logo.src = reader.result;
-        logo.classList.remove("hidden");
-        logoDataUrl = reader.result;
-      };
-      reader.readAsDataURL(event.target.files[0]);
-    }
-    </script>
-    
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js">
-    let logoDataUrl = "";
-
-    function previewLogo(event) {
-      const reader = new FileReader();
-      reader.onload = function () {
-        const logo = document.getElementById("schoolLogo");
-        logo.src = reader.result;
-        logo.classList.remove("hidden");
-        logoDataUrl = reader.result;
-      };
-      reader.readAsDataURL(event.target.files[0]);
-    }
-    </script>
-    
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
   <div class="max-w-7xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
     
     <!-- Form Section -->
     <div>
-      
-    <h1 class="text-2xl font-bold text-blue-700 mb-4">Isi Maklumat Takwim</h1>
-    <label class="block text-sm mb-1">Muat Naik Logo Sekolah:</label>
-    <input type="file" id="logoInput" accept="image/*" class="mb-4 p-2 border rounded w-full" onchange="previewLogo(event)">
-    
+      <h1 class="text-2xl font-bold text-blue-700 mb-4">Isi Maklumat Takwim</h1>
+
+      <label class="block text-sm mb-1">Muat Naik Logo Sekolah:</label>
+      <input type="file" id="logoInput" accept="image/*" class="mb-4 p-2 border rounded w-full" onchange="previewLogo(event)">
 
       <input id="namaSekolah" placeholder="Nama Sekolah" class="block w-full mb-2 p-2 border rounded">
       <input id="alamatSekolah" placeholder="Alamat Sekolah" class="block w-full mb-2 p-2 border rounded">
@@ -71,7 +28,7 @@
         <input type="text" id="tempat" placeholder="Tempat" class="p-2 border rounded">
         <input type="text" id="catatan" placeholder="Catatan" class="p-2 border rounded">
       </div>
-      <button onclick="tambahBaris()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mb-4">Tambah Aktiviti</button>
+      <button onclick="tambahBaris()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mb-4">Tambah Aktiviti</button></div></div>
 
       <h2 class="text-xl font-semibold mt-4">Maklumat Penyedia & Penyemak</h2>
       <div class="grid grid-cols-2 gap-2 mt-2">
@@ -87,15 +44,23 @@
         </div>
       </div>
 
-      <button onclick="muatTurunPDF()" class="mt-6 bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700">Muat Turun PDF</button>
+      
+        <div class="mt-6 text-center">
+          <label class="block mb-2 font-medium text-sm text-gray-700">Pilih Orientasi PDF:</label>
+          <select id="pdfOrientation" class="p-2 border rounded mb-4">
+            <option value="portrait">Potret</option>
+            <option value="landscape">Lanskap</option>
+          </select>
+          <div class="flex justify-center">
+        
+        <button onclick="muatTurunPDF()" class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700">Muat Turun PDF</button>
+      </div>
     </div>
 
     <!-- Preview Section -->
     <div class="bg-white p-6 rounded-xl shadow-lg">
-      
-    <img id="schoolLogo" src="" alt="Logo Sekolah" class="w-24 h-24 object-contain mx-auto mb-2 hidden">
-    <h2 class="text-xl font-bold text-center text-blue-800" id="previewSekolah">
-    Nama Sekolah</h2>
+      <img id="schoolLogo" src="" alt="Logo Sekolah" class="w-24 h-24 object-contain mx-auto mb-2 hidden">
+      <h2 class="text-xl font-bold text-center text-blue-800" id="previewSekolah">Nama Sekolah</h2>
       <p class="text-center text-sm text-gray-600 mb-2" id="previewAlamat">Alamat Sekolah</p>
       <h3 class="text-center text-lg font-semibold mb-4" id="previewTajuk">Tajuk Takwim</h3>
 
@@ -125,7 +90,22 @@
     </div>
   </div>
 
+  <footer class="mt-10 text-center text-sm text-gray-500">© 2025 Hak Cipta Cikgu Lai. Dibina untuk warga pendidikan.</footer>
+
 <script>
+  let logoDataUrl = "";
+
+  function previewLogo(event) {
+    const reader = new FileReader();
+    reader.onload = function () {
+      const logo = document.getElementById("schoolLogo");
+      logo.src = reader.result;
+      logo.classList.remove("hidden");
+      logoDataUrl = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+  }
+
   function updatePreview() {
     document.getElementById("previewSekolah").innerText = document.getElementById("namaSekolah").value || "Nama Sekolah";
     document.getElementById("previewAlamat").innerText = document.getElementById("alamatSekolah").value || "Alamat Sekolah";
@@ -167,10 +147,16 @@
 
   async function muatTurunPDF() {
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+    const orientation = document.getElementById("pdfOrientation").value;
+    const doc = new jsPDF({ orientation });
+
+    if (logoDataUrl) {
+      doc.addImage(logoDataUrl, "PNG", 10, 10, 30, 30);
+    }
+
     doc.setFontSize(12);
-    doc.text(document.getElementById("namaSekolah").value || "Nama Sekolah", 14, 15);
-    doc.text(document.getElementById("alamatSekolah").value || "Alamat Sekolah", 14, 22);
+    doc.text(document.getElementById("namaSekolah").value || "Nama Sekolah", 45, 15);
+    doc.text(document.getElementById("alamatSekolah").value || "Alamat Sekolah", 45, 22);
     doc.text(document.getElementById("tajukTakwim").value || "Tajuk Takwim", 14, 32);
 
     const rows = [];
@@ -201,20 +187,6 @@
 
     doc.save("Takwim-Ketua-Panitia.pdf");
   }
-
-    let logoDataUrl = "";
-
-    function previewLogo(event) {
-      const reader = new FileReader();
-      reader.onload = function () {
-        const logo = document.getElementById("schoolLogo");
-        logo.src = reader.result;
-        logo.classList.remove("hidden");
-        logoDataUrl = reader.result;
-      };
-      reader.readAsDataURL(event.target.files[0]);
-    }
-    </script>
-    
+</script>
 </body>
 </html>
