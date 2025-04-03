@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <title>Penjana Takwim Ketua Panitia</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.1.0/docx.umd.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+  <div class="max-w-5xl mx-auto p-6">
+    <header class="text-center mb-6">
+      <div class="flex flex-col items-center gap-2 mb-4">
+        <input type="file" id="logoInput" accept="image/*" class="mb-2" onchange="previewLogo(event)">
+        <img id="schoolLogo" src="" alt="Logo Sekolah" class="w-24 h-24 object-contain hidden">
+        <input id="namaSekolah" placeholder="NAMA SEKOLAH" class="text-2xl font-bold text-center text-blue-800 bg-transparent">
+        <input id="alamatSekolah" placeholder="Alamat Sekolah" class="text-sm text-center text-gray-600 bg-transparent">
+      </div>
+    </header>
+
+    <h3 class="text-xl font-semibold text-center mb-4">TAKWIM PANITIA</h3>
+
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input type="date" id="tarikh" class="p-2 border border-gray-300 rounded-lg" placeholder="Tarikh">
+        <input type="text" id="aktiviti" placeholder="Aktiviti" class="p-2 border border-gray-300 rounded-lg">
+        <input type="text" id="tempat" placeholder="Tempat" class="p-2 border border-gray-300 rounded-lg">
+        <input type="text" id="catatan" placeholder="Catatan" class="p-2 border border-gray-300 rounded-lg">
+      </div>
+      <button onclick="tambahBaris()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Tambah ke Takwim</button>
+    </div>
+
+    <div class="overflow-x-auto bg-white rounded-2xl shadow-lg p-4 mb-6">
+      <table id="jadual" class="min-w-full border border-gray-300 text-center">
+        <thead class="bg-blue-100 text-gray-700">
+          <tr>
+            <th class="p-2 border">Tarikh</th>
+            <th class="p-2 border">Aktiviti</th>
+            <th class="p-2 border">Tempat</th>
+            <th class="p-2 border">Catatan</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div>
+        <p class="font-semibold mb-2">Disediakan oleh:</p>
+        <div class="h-20 border-b border-dashed mb-2 w-2/3"></div>
+        <input type="text" id="penyediaNama" placeholder="Nama Penyedia" class="border p-2 w-full max-w-xs rounded mb-1">
+        <input type="text" id="penyediaJawatan" placeholder="Jawatan" class="border p-2 w-full max-w-xs rounded mb-1">
+        <input type="date" id="penyediaTarikh" class="border p-2 w-full max-w-xs rounded">
+      </div>
+      <div>
+        <p class="font-semibold mb-2">Disemak oleh:</p>
+        <div class="h-20 border-b border-dashed mb-2 w-2/3"></div>
+        <input type="text" id="penyemakNama" placeholder="Nama Penyemak" class="border p-2 w-full max-w-xs rounded mb-1">
+        <input type="text" id="penyemakJawatan" placeholder="Jawatan" class="border p-2 w-full max-w-xs rounded mb-1">
+        <input type="date" id="penyemakTarikh" class="border p-2 w-full max-w-xs rounded">
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-4 justify-center">
+      <button onclick="muatTurunExcel()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">Muat Turun Excel</button>
+      <button onclick="muatTurunPDF()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">Muat Turun PDF</button>
+      <button onclick="muatTurunWord()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Muat Turun Word</button>
+    </div>
+
+    <footer class="mt-10 text-center text-sm text-gray-500">
+      © 2025 Panitia Sekolah. Dibina untuk pendidikan.
+    </footer>
+  </div>
+
+<script>
+  let logoDataUrl = "";
+
+  function previewLogo(event) {
+    const reader = new FileReader();
+    reader.onload = function () {
+      const logo = document.getElementById("schoolLogo");
+      logo.src = reader.result;
+      logo.classList.remove("hidden");
+      logoDataUrl = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+  }
+
+  function tambahBaris() {
+    const tarikh = document.getElementById('tarikh').value;
+    const aktiviti = document.getElementById('aktiviti').value;
+    const tempat = document.getElementById('tempat').value;
+    const catatan = document.getElementById('catatan').value;
+
+    const table = document.getElementById('jadual').getElementsByTagName('tbody')[0];
+    const row = table.insertRow();
+    row.insertCell(0).innerText = tarikh;
+    row.insertCell(1).innerText = aktiviti;
+    row.insertCell(2).innerText = tempat;
+    row.insertCell(3).innerText = catatan;
+
+    document.getElementById('tarikh').value = '';
+    document.getElementById('aktiviti').value = '';
+    document.getElementById('tempat').value = '';
+    document.getElementById('catatan').value = '';
+  }
+
+  function muatTurunExcel() {
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.table_to_sheet(document.getElementById('jadual'));
+    XLSX.utils.book_append_sheet(wb, ws, "Takwim");
+    XLSX.writeFile(wb, "Takwim-Ketua-Panitia.xlsx");
+  }
+
+  async function muatTurunPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    if (logoDataUrl) {
+      doc.addImage(logoDataUrl, "PNG", 10, 10, 30, 30);
+    }
+    doc.setFontSize(12);
+    doc.text(document.getElementById("namaSekolah").value || "NAMA SEKOLAH", 45, 15);
+    doc.text(document.getElementById("alamatSekolah").value || "Alamat Sekolah", 45, 22);
+    doc.text("TAKWIM PANITIA", 14, 45);
+
+    const rows = [];
+    const table = document.getElementById('jadual').getElementsByTagName('tbody')[0];
+    for (let i = 0; i < table.rows.length; i++) {
+      const r = table.rows[i];
+      rows.push([
+        r.cells[0].innerText,
+        r.cells[1].innerText,
+        r.cells[2].innerText,
+        r.cells[3].innerText
+      ]);
+    }
+
+    doc.autoTable({
+      head: [['Tarikh', 'Aktiviti', 'Tempat', 'Catatan']],
+      body: rows,
+      startY: 50,
+    });
+
+    doc.text(`Disediakan oleh: ${document.getElementById('penyediaNama').value || ''}`, 14, doc.lastAutoTable.finalY + 20);
+    doc.text(`Jawatan: ${document.getElementById('penyediaJawatan').value || ''}`, 14, doc.lastAutoTable.finalY + 26);
+    doc.text(`Tarikh: ${document.getElementById('penyediaTarikh').value || ''}`, 14, doc.lastAutoTable.finalY + 32);
+
+    doc.text(`Disemak oleh: ${document.getElementById('penyemakNama').value || ''}`, 110, doc.lastAutoTable.finalY + 20);
+    doc.text(`Jawatan: ${document.getElementById('penyemakJawatan').value || ''}`, 110, doc.lastAutoTable.finalY + 26);
+    doc.text(`Tarikh: ${document.getElementById('penyemakTarikh').value || ''}`, 110, doc.lastAutoTable.finalY + 32);
+
+    doc.save("Takwim-Ketua-Panitia.pdf");
+  }
+
+  function muatTurunWord() {
+    alert("Fungsi eksport Word dengan logo belum sepenuhnya disokong di semua pelayar. Sila gunakan PDF untuk hasil terbaik buat masa ini.");
+  }
+</script>
+</body>
+</html>
